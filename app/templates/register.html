@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Register | AI Portfolio Generator{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center g-4">
+    <div class="col-lg-5 order-lg-2">
+        <div class="hero-panel h-100">
+            <div class="hero-kicker">Create account</div>
+            <h1 class="hero-title">Build a polished career story from one simple profile.</h1>
+            <p class="hero-copy mb-4">Set up an account to compare your resume against roles, close skill gaps, and generate a shareable portfolio.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <span class="badge-soft chip-accent"><i class="fas fa-user-check"></i> Quick signup</span>
+                <span class="badge-soft chip-accent"><i class="fas fa-bullseye"></i> Role matching</span>
+                <span class="badge-soft chip-accent"><i class="fas fa-file-export"></i> Portfolio-ready output</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5 order-lg-1">
+        <div class="card p-4 p-md-5">
+            <div class="mb-4">
+                <div class="hero-kicker mb-2">Register</div>
+                <h2 class="section-title mb-1">Create your account</h2>
+                <p class="text-secondary mb-0">It takes a minute and unlocks the full workflow.</p>
+            </div>
+            {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+            <form method="post" action="/register" class="d-grid gap-3">
+                <div>
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" placeholder="Choose a username" required>
+                </div>
+                <div>
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Create a password" required>
+                </div>
+                <button type="submit" class="btn btn-primary py-3">Create account</button>
+            </form>
+            <p class="text-center mt-4 mb-0 text-secondary">Already registered? <a href="/login" class="link-light fw-semibold">Sign in</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

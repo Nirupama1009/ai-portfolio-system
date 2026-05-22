@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Resume Analyzer | AI Portfolio Generator{% endblock %}
+
+{% block content %}
+<div class="hero-panel mb-4">
+    <div class="row align-items-end g-4">
+        <div class="col-lg-8">
+            <div class="hero-kicker">Resume analyzer</div>
+            <h1 class="hero-title">See where your resume already fits and where it needs work.</h1>
+            <p class="hero-copy">Choose a target role, paste your resume text, and get a match score, missing skills, and a learning roadmap.</p>
+        </div>
+        <div class="col-lg-4">
+            <div class="metric-card">
+                <div class="metric-label">Supported roles</div>
+                <div class="metric-value">10 career paths</div>
+                <p class="mb-0 text-secondary">Built to guide you toward job-ready portfolios and focused upskilling.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 align-items-start">
+    <div class="col-lg-8">
+        <div class="card p-4 p-md-5">
+            <div class="mb-4">
+                <div class="hero-kicker mb-2">Start analysis</div>
+                <h2 class="section-title mb-1">Evaluate your resume</h2>
+                <p class="text-secondary mb-0">Use real role expectations to get a more focused result.</p>
+            </div>
+            {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+            <form method="post" action="/analyze" class="d-grid gap-3" enctype="multipart/form-data">
+                <div>
+                    <label class="form-label">Target Role</label>
+                    <select name="role" class="form-select" required>
+                        <option value="">Select role</option>
+                        <option>Data Analyst</option>
+                        <option>Machine Learning Engineer</option>
+                        <option>Data Scientist</option>
+                        <option>Backend Developer</option>
+                        <option>AI Engineer</option>
+                        <option>Business Intelligence Analyst</option>
+                        <option>Full Stack Developer</option>
+                        <option>Data Engineer</option>
+                        <option>NLP Engineer</option>
+                        <option>Cloud Engineer</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">Upload your resume file (PDF preferred)</label>
+                    <input type="file" name="resume_file" class="form-control" accept=".pdf,.txt,.doc,.docx" required>
+                    <div class="form-text">Please upload a resume file — pasted text is no longer accepted.</div>
+                </div>
+                <button class="btn btn-primary py-3" type="submit">Analyze resume</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card p-4 h-100">
+            <div class="section-title mb-3">What you get</div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="fw-semibold">Match score</div>
+                    <div class="text-secondary">A quick view of how aligned your resume is with the selected role.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="fw-semibold">Missing skills</div>
+                    <div class="text-secondary">A concise list of skills to add or strengthen next.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="fw-semibold">Learning roadmap</div>
+                    <div class="text-secondary">A guided plan to help you focus your next steps.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

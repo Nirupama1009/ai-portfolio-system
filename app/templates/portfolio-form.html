@@ -1,0 +1,479 @@
+{% extends "base.html" %}
+
+{% block title %}Build Portfolio | AI Portfolio Generator{% endblock %}
+
+{% block content %}
+<div class="hero-panel mb-4">
+  <div class="hero-kicker">Next step</div>
+  <h1 class="hero-title mb-3">Build Your Professional Portfolio</h1>
+  <p class="hero-copy">Fill in your professional details to create a beautiful portfolio page that showcases your work and skills.</p>
+  {% if selected_template %}
+  <div class="mt-3 d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);">
+    <span class="text-secondary small mb-0">Selected template</span>
+    <strong class="text-white">{{ selected_template.title }}</strong>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Live preview for selected template and image options -->
+<div class="card p-4 mb-4" id="live-preview">
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <div id="preview-photo" style="width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;border:4px solid var(--tpl-accent);">
+      <i class="fas fa-user" style="color:var(--muted)"></i>
+    </div>
+    <div>
+      <div id="preview-name" style="font-weight:800;font-size:1.05rem;">Your name</div>
+      <div id="preview-role" style="color:rgba(255,255,255,0.7);font-size:0.95rem;">Role or headline</div>
+    </div>
+  </div>
+</div>
+
+<div class="card p-5">
+  <form method="post" action="/portfolio" enctype="multipart/form-data">
+    <input type="hidden" name="portfolio_template" value="{{ template }}">
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <label class="form-label fw-bold mb-2">Template accent color</label>
+        <div class="d-flex align-items-center gap-2">
+          <input type="color" name="template_accent" class="form-control form-control-color" value="{{ selected_template.accent if selected_template and selected_template.accent else '#6c8cff' }}" title="Choose template accent">
+          <div class="text-secondary small">Pick a primary color for the selected template</div>
+        </div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <div class="text-secondary small mb-2">Quick swatches</div>
+      <div id="swatches" style="display:flex;gap:8px;">
+        <button type="button" class="swatch" data-color="#6c8cff" style="width:32px;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#6c8cff"></button>
+        <button type="button" class="swatch" data-color="#5cc8ff" style="width:32px;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#5cc8ff"></button>
+        <button type="button" class="swatch" data-color="#3dd6c5" style="width:32px;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#3dd6c5"></button>
+        <button type="button" class="swatch" data-color="#ffb84d" style="width:32px;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#ffb84d"></button>
+        <button type="button" class="swatch" data-color="#f26d78" style="width:32px;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#f26d78"></button>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-md-4">
+        <label class="form-label fw-bold mb-2">Profile image size</label>
+        <input type="range" name="profile_image_size" min="60" max="220" value="120" class="form-range" />
+        <div class="text-secondary small">Adjust displayed image size (px)</div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-bold mb-2">Profile image shape</label>
+        <select name="profile_image_shape" class="form-select">
+          <option value="circle" selected>Circle</option>
+          <option value="square">Square</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-bold mb-2">Profile image alignment</label>
+        <select name="profile_image_align" class="form-select">
+          <option value="left">Left</option>
+          <option value="center" selected>Center</option>
+          <option value="right">Right</option>
+        </select>
+      </div>
+    </div>
+    <div class="mb-4">
+      <label class="form-label fw-bold mb-2">Auto-fill from Resume</label>
+      <div class="d-flex gap-2 mb-2">
+        <input id="extract-file" type="file" class="form-control form-control-sm" accept=".pdf,.docx,.doc,.txt" placeholder="Choose resume file">
+        <button id="extract-btn" type="button" class="btn btn-primary btn-sm" style="white-space: nowrap;">Extract</button>
+      </div>
+      <div id="extract-status" class="alert alert-info d-none small mb-0">
+        <i class="fas fa-spinner fa-spin me-2"></i><span id="status-text">Extracting...</span>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <label class="form-label fw-bold mb-2">Full name</label>
+        <input type="text" class="form-control" name="name" placeholder="Your full name" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold mb-2">Email</label>
+        <input type="email" class="form-control" name="email" placeholder="you@example.com" required>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <label class="form-label fw-bold mb-2">LinkedIn</label>
+        <input type="url" class="form-control" name="linkedin" placeholder="https://linkedin.com/in/username">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold mb-2">GitHub</label>
+        <input type="url" class="form-control" name="github" placeholder="https://github.com/username">
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <label class="form-label fw-bold mb-2">Target role</label>
+        <input type="text" class="form-control" name="role" placeholder="e.g., Data Scientist">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold mb-2">Profile image</label>
+        <div class="input-group">
+          <input type="file" class="form-control" id="profileImage" name="profile_image" accept="image/*">
+          <span class="input-group-text">Upload</span>
+        </div>
+        <small class="text-secondary">JPG, PNG, GIF, or WebP (max 5MB)</small>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label fw-bold mb-2">Professional summary</label>
+      <textarea class="form-control" name="summary" rows="4" placeholder="A short summary of your background and goals" required></textarea>
+      <small class="text-secondary">Highlight key accomplishments and expertise</small>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label fw-bold mb-2">Technical Skills</label>
+      <textarea class="form-control" name="technical_skills" rows="3" placeholder="Python, SQL, FastAPI, Docker, Tableau"></textarea>
+      <small class="text-secondary">Separate each skill with a comma</small>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label fw-bold mb-2">Soft Skills</label>
+      <textarea class="form-control" name="soft_skills" rows="3" placeholder="Communication, Leadership, Teamwork"></textarea>
+      <small class="text-secondary">List important soft skills separated by commas</small>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <label class="form-label fw-bold mb-2">School (Secondary)</label>
+        <textarea class="form-control" name="school_education" rows="3" placeholder="e.g., High School, Board, Year, Grades"></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold mb-2">College / University</label>
+        <textarea class="form-control" name="college_education" rows="3" placeholder="e.g., BSc Computer Science, University of XYZ, 2023"></textarea>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label fw-bold mb-2">Experience</label>
+      <textarea class="form-control" name="experience" rows="3" placeholder="Relevant roles, companies, achievements"></textarea>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label fw-bold mb-2">Featured Projects <small class="text-secondary">(drag to reorder)</small></label>
+      <div id="projects-container">
+        <div class="project-item mb-3" draggable="true">
+          <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
+          <label class="form-label fw-bold">Project 1 name</label>
+          <input name="project_name[]" class="form-control mb-2" placeholder="Project title">
+          <label class="form-label fw-bold">Project 1 description</label>
+          <textarea name="project_desc[]" class="form-control" rows="3" placeholder="Describe the project, your role, tech used, and outcomes"></textarea>
+        </div>
+      </div>
+      <div class="mt-2">
+        <button id="add-project" type="button" class="btn btn-outline-light">+ Add another project</button>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label fw-bold mb-2">Certifications <small class="text-secondary">(drag to reorder)</small></label>
+      <div id="certificates-container">
+        <div class="certificate-item mb-3" draggable="true">
+          <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
+          <label class="form-label fw-bold">Certificate 1</label>
+          <input name="certificate_name[]" class="form-control mb-2" placeholder="Certificate title (e.g., AWS Solutions Architect)">
+          <label class="form-label">Issuer / Date</label>
+          <input name="certificate_desc[]" class="form-control" placeholder="Issuer, Year or Month Year">
+        </div>
+      </div>
+      <div class="mt-2">
+        <button id="add-certificate" type="button" class="btn btn-outline-light">+ Add another certificate</button>
+      </div>
+    </div>
+
+    <div class="d-grid gap-2">
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="btn btn-outline-light" onclick="previewSubmit(this.closest('form'))">Preview</button>
+        <button type="submit" class="btn btn-primary py-3 fw-bold" style="font-size: 1.1rem;">
+          <i class="fas fa-sparkles me-2"></i>Generate Portfolio
+        </button>
+      </div>
+      <a href="/analyze" class="btn btn-outline-light py-2">Back to analysis</a>
+    </div>
+  </form>
+</div>
+
+<style>
+  .form-control {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 0.75rem 1rem;
+  }
+
+  .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .form-control:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--primary);
+    color: #fff;
+    box-shadow: 0 0 0 0.2rem rgba(108, 140, 255, 0.15);
+  }
+
+  .form-label {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .input-group-text {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .text-secondary {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .text-white {
+    color: #fff !important;
+  }
+
+  .drag-handle {
+    cursor: grab;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .drag-handle:active {
+    cursor: grabbing;
+  }
+
+  .project-item, .certificate-item {
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0.75rem;
+    border-radius: 6px;
+  }
+
+  .project-item[draggable="true"]:hover, .certificate-item[draggable="true"]:hover {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .project-item.dragging, .certificate-item.dragging {
+    opacity: 0.5;
+    transform: scale(0.98);
+    background: rgba(108, 140, 255, 0.1);
+    border-color: rgba(108, 140, 255, 0.4);
+  }
+
+  .project-item.drag-over, .certificate-item.drag-over {
+    background: rgba(61, 225, 197, 0.08);
+    border-color: rgba(61, 225, 197, 0.3);
+  }
+</style>
+
+<script>
+  // Live preview updates for portfolio-form
+  (function(){
+    const colorInput = document.querySelector('input[name="template_accent"]');
+    const sizeInput = document.querySelector('input[name="profile_image_size"]');
+    const shapeInput = document.querySelector('select[name="profile_image_shape"]');
+    const alignInput = document.querySelector('select[name="profile_image_align"]');
+    const fileInput = document.querySelector('input[name="profile_image"]');
+    const previewPhoto = document.getElementById('preview-photo');
+    const previewName = document.getElementById('preview-name');
+    const previewRole = document.getElementById('preview-role');
+
+    function applyPreview() {
+      const color = colorInput ? colorInput.value : null;
+      const size = sizeInput ? sizeInput.value : 100;
+      const shape = shapeInput ? shapeInput.value : 'circle';
+      const align = alignInput ? alignInput.value : 'center';
+      if (color) previewPhoto.style.borderColor = color;
+      previewPhoto.style.width = size + 'px';
+      previewPhoto.style.height = size + 'px';
+      previewPhoto.style.borderRadius = (shape === 'circle') ? '50%' : '8px';
+      // update shell alignment by toggling a data attribute
+      const shell = document.getElementById('live-preview');
+      if (shell) shell.style.justifyContent = (align === 'left') ? 'flex-start' : (align === 'right' ? 'flex-end' : 'center');
+    }
+
+    if (colorInput) colorInput.addEventListener('input', applyPreview);
+    if (sizeInput) sizeInput.addEventListener('input', applyPreview);
+    if (shapeInput) shapeInput.addEventListener('change', applyPreview);
+    if (alignInput) alignInput.addEventListener('change', applyPreview);
+
+    if (fileInput) {
+      fileInput.addEventListener('change', (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        const url = URL.createObjectURL(f);
+        previewPhoto.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:${shapeInput && shapeInput.value === 'circle' ? '50%' : '8px'}">`;
+      });
+    }
+
+    // initial apply
+    applyPreview();
+  })();
+
+  // Swatches: click to set color input and update live preview
+  (function(){
+    const sws = document.querySelectorAll('.swatch');
+    const colorInput = document.querySelector('input[name="template_accent"]');
+    sws.forEach(b => b.addEventListener('click', (e)=>{
+      const c = e.currentTarget.getAttribute('data-color');
+      if (colorInput) { colorInput.value = c; colorInput.dispatchEvent(new Event('input')); }
+    }));
+  })();
+
+  // Submit current form to preview endpoint in a new tab
+  function previewSubmit(formEl){
+    const origAction = formEl.action; const origTarget = formEl.target;
+    formEl.action = '/preview-portfolio'; formEl.target = '_blank';
+    formEl.submit();
+    formEl.action = origAction; formEl.target = origTarget || '';
+  }
+
+  function setupDragDrop() {
+    let draggedElement = null;
+
+    function attachDragListeners(items) {
+      items.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+          draggedElement = item;
+          item.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        item.addEventListener('dragend', (e) => {
+          item.classList.remove('dragging');
+          document.querySelectorAll('.project-item, .certificate-item').forEach(i => {
+            i.classList.remove('drag-over');
+          });
+        });
+
+        item.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          if (draggedElement && draggedElement !== item && draggedElement.parentElement === item.parentElement) {
+            item.classList.add('drag-over');
+          }
+        });
+
+        item.addEventListener('dragleave', (e) => {
+          item.classList.remove('drag-over');
+        });
+
+        item.addEventListener('drop', (e) => {
+          e.preventDefault();
+          if (draggedElement && draggedElement !== item && draggedElement.parentElement === item.parentElement) {
+            const allItems = Array.from(draggedElement.parentElement.children);
+            const draggedIdx = allItems.indexOf(draggedElement);
+            const targetIdx = allItems.indexOf(item);
+            if (draggedIdx < targetIdx) {
+              item.parentElement.insertBefore(draggedElement, item.nextSibling);
+            } else {
+              item.parentElement.insertBefore(draggedElement, item);
+            }
+            item.classList.remove('drag-over');
+          }
+        });
+      });
+    }
+
+    attachDragListeners(document.querySelectorAll('.project-item, .certificate-item'));
+    return attachDragListeners;
+  }
+
+  const attachDragListeners = setupDragDrop();
+
+  (function(){
+    let projectIndex = 1;
+    const addBtn = document.getElementById('add-project');
+    const container = document.getElementById('projects-container');
+    
+    addBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      projectIndex += 1;
+      const div = document.createElement('div');
+      div.className = 'project-item mb-3';
+      div.draggable = true;
+      div.innerHTML = `
+        <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
+        <label class="form-label fw-bold">Project ${projectIndex} name</label>
+        <input name="project_name[]" class="form-control mb-2" placeholder="Project title">
+        <label class="form-label fw-bold">Project ${projectIndex} description</label>
+        <textarea name="project_desc[]" class="form-control" rows="3" placeholder="Describe the project, your role, tech used, and outcomes"></textarea>
+      `;
+      container.appendChild(div);
+      attachDragListeners([div]);
+    });
+    // Certificates
+    let certIndex = 1;
+    const addCertBtn = document.getElementById('add-certificate');
+    const certContainer = document.getElementById('certificates-container');
+    addCertBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      certIndex += 1;
+      const div = document.createElement('div');
+      div.className = 'certificate-item mb-3';
+      div.draggable = true;
+      div.innerHTML = `
+        <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
+        <label class="form-label fw-bold">Certificate ${certIndex}</label>
+        <input name="certificate_name[]" class="form-control mb-2" placeholder="Certificate title (e.g., AWS Solutions Architect)">
+        <label class="form-label">Issuer / Date</label>
+        <input name="certificate_desc[]" class="form-control" placeholder="Issuer, Year or Month Year">
+      `;
+      certContainer.appendChild(div);
+      attachDragListeners([div]);
+    });
+  })();
+
+  document.getElementById('extract-btn').addEventListener('click', async function() {
+    const fileInput = document.getElementById('extract-file');
+    const statusDiv = document.getElementById('extract-status');
+    const statusText = document.getElementById('status-text');
+    const file = fileInput.files[0];
+
+    if (!file) {
+      alert('Please select a resume file');
+      return;
+    }
+
+    statusDiv.classList.remove('d-none');
+    statusText.textContent = 'Extracting...';
+
+    const formData = new FormData();
+    formData.append('resume_file', file);
+
+    try {
+      const response = await fetch('/extract-resume', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        document.querySelector('input[name="name"]').value = data.name || '';
+        document.querySelector('input[name="email"]').value = data.email || '';
+        document.querySelector('input[name="linkedin"]').value = data.linkedin || '';
+        document.querySelector('input[name="github"]').value = data.github || '';
+        document.querySelector('textarea[name="technical_skills"]').value = Array.isArray(data.technical_skills) ? data.technical_skills.join(', ') : (data.technical_skills || '');
+        document.querySelector('textarea[name="soft_skills"]').value = Array.isArray(data.soft_skills) ? data.soft_skills.join(', ') : (data.soft_skills || '');
+
+        statusText.textContent = 'Resume extracted successfully! Review and adjust as needed.';
+        setTimeout(() => statusDiv.classList.add('d-none'), 3000);
+      } else {
+        statusText.textContent = 'Extraction failed: ' + (data.error || 'Unknown error');
+        setTimeout(() => statusDiv.classList.add('d-none'), 3000);
+      }
+    } catch (error) {
+      statusText.textContent = 'Error: ' + error.message;
+      setTimeout(() => statusDiv.classList.add('d-none'), 3000);
+    }
+  });
+</script>
+{% endblock %}

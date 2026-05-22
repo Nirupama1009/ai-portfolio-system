@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Result | AI Portfolio Generator{% endblock %}
+
+{% block content %}
+<div class="hero-panel mb-4">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-7">
+      <div class="hero-kicker">Analysis complete</div>
+      <h1 class="hero-title mb-3">{{ role }} match score: {{ match_percentage }}%</h1>
+      <p class="hero-copy mb-4">Your resume is close, but a few targeted improvements will make it much stronger for this role.</p>
+    </div>
+    <div class="col-lg-5">
+      <div class="card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="section-title">Match progress</div>
+          <span class="badge-soft chip-accent">{{ match_percentage }}%</span>
+        </div>
+        <div class="progress mb-2" style="height: 12px; background: rgba(255,255,255,0.08); border-radius: 999px;">
+          <div class="progress-bar" style="width: {{ match_percentage }}%; background: linear-gradient(135deg, var(--primary), var(--primary-2)); border-radius: 999px;"></div>
+        </div>
+        <div class="text-secondary">Gap remaining: {{ skill_gap }}%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card p-4 mb-4">
+      <div class="section-title mb-3">Detected skills</div>
+      {% if skills %}
+        <div>
+          {% for skill in skills %}
+            <span class="chip chip-accent">{{ skill }}</span>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-secondary mb-0">No skills were detected in the pasted resume text.</p>
+      {% endif %}
+    </div>
+
+    <div class="card p-4 mb-4">
+      <div class="section-title mb-3">Skills to develop</div>
+      {% if missing_skills %}
+        <div>
+          {% for skill in missing_skills %}
+            <span class="chip chip-warning">{{ skill }}</span>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-success mb-0">You already cover the expected skills for this role.</p>
+      {% endif %}
+    </div>
+
+    <div class="card p-4">
+      <div class="section-title mb-3">Ready to build your portfolio?</div>
+      <p class="text-secondary mb-4">Move to the next step and fill in your professional details to create a beautiful portfolio page.</p>
+      <form method="get" action="/portfolio-templates" class="d-grid">
+        <input type="hidden" name="resume_text" value="{{ resume_text }}">
+        <input type="hidden" name="role" value="{{ role }}">
+        <button class="btn btn-primary py-3 fw-bold" type="submit" style="font-size: 1.1rem;">
+          <i class="fas fa-arrow-right me-2"></i>Build Portfolio
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card p-4 mb-4">
+      <div class="section-title mb-3">Learning roadmap</div>
+      <div class="table-responsive">
+        <table class="table table-dark table-striped align-middle">
+          <thead>
+            <tr>
+              <th>Week</th>
+              <th>Focus</th>
+              <th>Course</th>
+              <th>Platform</th>
+              <th>Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in learning_roadmap %}
+            <tr>
+              <td>{{ item['week'] }}</td>
+              <td>{{ item['focus'] }}</td>
+              <td>{{ item.get('course', '-') }}</td>
+              <td>{{ item.get('platform', '-') }}</td>
+              <td>{% if item.get('link') %}<a href="{{ item['link'] }}" target="_blank" class="link-light">Open</a>{% else %}-{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card p-4">
+      <div class="section-title mb-3">Next steps</div>
+      <div class="d-grid gap-3">
+        <div class="metric-card">
+          <div class="metric-label">1. Refine resume</div>
+          <div class="text-secondary">Strengthen the missing skills with project examples and measurable results.</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">2. Fill portfolio</div>
+          <div class="text-secondary">Generate a page that shows your story, links, and work in one place.</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">3. Apply confidently</div>
+          <div class="text-secondary">Use the roadmap to prepare for interviews and role-specific screening.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

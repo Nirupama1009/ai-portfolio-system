@@ -1,0 +1,66 @@
+John Michael Smith
+Senior Full Stack Engineer
+
+Contact Information:
+Email: john.smith@techmail.com
+Phone: +1 (555) 123-4567
+LinkedIn: https://linkedin.com/in/johnsmith
+GitHub: https://github.com/johnsmith
+
+Professional Summary
+Experienced full stack engineer with 6+ years of expertise in building scalable web applications using modern technologies. Strong background in cloud infrastructure, microservices architecture, and team leadership. Passionate about clean code and DevOps practices.
+
+Education
+College/University:
+Bachelor of Science in Computer Science
+University of California, Berkeley
+Graduated: May 2018
+GPA: 3.8/4.0
+
+High School:
+Lincoln High School
+Graduated: June 2014
+
+Professional Experience
+Senior Full Stack Engineer at CloudTech Solutions (2021 - Present)
+- Led development of microservices platform handling 10M+ requests/month
+- Architected scalable database schema reducing query time by 60%
+- Mentored team of 5 junior developers
+- Implemented CI/CD pipeline reducing deployment time from 2 hours to 15 minutes
+
+Full Stack Engineer at StartupXYZ (2019 - 2021)
+- Built customer-facing web application using React and Node.js
+- Integrated third-party APIs (Stripe, Twilio, SendGrid)
+- Implemented real-time features using WebSockets
+- Achieved 99.9% uptime on production systems
+
+Junior Developer at TechStart Inc (2018 - 2019)
+- Developed backend services using Python and Flask
+- Created responsive UI components with React
+- Contributed to open-source projects
+
+Projects
+E-commerce Platform
+- Full-stack e-commerce application built with React, Node.js, and PostgreSQL
+- Implemented payment processing with Stripe integration
+- Real-time inventory management system
+- Achieved 99.5% uptime on AWS infrastructure
+
+AI Content Generator
+- Machine learning-powered content generation tool
+- Built REST API with FastAPI and integrated OpenAI
+- React frontend with real-time streaming responses
+- 50K+ active users monthly
+
+Portfolio Management Dashboard
+- Financial portfolio tracking application
+- Real-time stock price updates
+- Built with React, TypeScript, and D3.js
+- User authentication with OAuth 2.0
+
+Skills
+Frontend: React, TypeScript, Vue.js, CSS3, Bootstrap
+Backend: Node.js, Python, FastAPI, Django, Express.js
+Databases: PostgreSQL, MongoDB, Redis, ElasticSearch
+Cloud/DevOps: AWS (EC2, S3, Lambda), Docker, Kubernetes, GitHub Actions
+Tools: Git, VS Code, Figma, Jira, Postman

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Portfolio Generator{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07111f;
+            --bg-soft: #0b1728;
+            --surface: rgba(10, 20, 36, 0.82);
+            --surface-strong: #0f1e33;
+            --text: #eaf2ff;
+            --muted: #9fb0c9;
+            --line: rgba(153, 177, 216, 0.14);
+            --primary: #6c8cff;
+            --primary-2: #3dd6c5;
+            --accent: #ffb36b;
+            --danger: #ff6b7a;
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 16px;
+            --shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { min-height: 100%; }
+
+        body {
+            margin: 0;
+            font-family: 'Manrope', sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(108, 140, 255, 0.2), transparent 30%),
+                radial-gradient(circle at top right, rgba(61, 214, 197, 0.18), transparent 24%),
+                linear-gradient(160deg, #050b14 0%, #091320 52%, #061019 100%);
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55), transparent 80%);
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: auto -10% 0 auto;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,179,107,0.13), transparent 70%);
+            pointer-events: none;
+        }
+
+        a { color: inherit; }
+
+        .site-shell {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background: rgba(6, 12, 22, 0.72);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .navbar-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .navbar-brand .brand-mark {
+            display: inline-grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            margin-right: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            box-shadow: 0 10px 24px rgba(108, 140, 255, 0.28);
+        }
+
+        .navbar .nav-link,
+        .navbar .navbar-text {
+            color: rgba(234, 242, 255, 0.88) !important;
+        }
+
+        main {
+            flex: 1;
+            width: 100%;
+            padding: 42px 0 56px;
+        }
+
+        .page-width {
+            width: min(1180px, calc(100% - 2rem));
+            margin: 0 auto;
+        }
+
+        .card, .glass-card {
+            border: 1px solid var(--line);
+            border-radius: var(--radius-xl);
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            box-shadow: var(--shadow);
+            color: var(--text);
+        }
+
+        .card {
+            overflow: hidden;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-panel {
+            border: 1px solid var(--line);
+            border-radius: 32px;
+            background:
+                linear-gradient(135deg, rgba(108, 140, 255, 0.18), rgba(61, 214, 197, 0.12)),
+                rgba(8, 16, 29, 0.78);
+            box-shadow: var(--shadow);
+            padding: clamp(1.5rem, 4vw, 3rem);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-panel::after {
+            content: '';
+            position: absolute;
+            inset: auto -60px -80px auto;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(61,214,197,0.22), transparent 70%);
+            filter: blur(4px);
+        }
+
+        .hero-kicker {
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            font-size: 0.76rem;
+            color: var(--muted);
+            margin-bottom: 0.8rem;
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.9rem);
+            line-height: 1.03;
+            letter-spacing: -0.04em;
+            margin-bottom: 1rem;
+        }
+
+        .hero-copy {
+            color: var(--muted);
+            max-width: 62ch;
+            font-size: 1.05rem;
+        }
+
+        .metric-card {
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem 1.1rem;
+            height: 100%;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+
+        .metric-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 0.35rem;
+        }
+
+        .soft-rule {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+        }
+
+        .btn-primary {
+            --bs-btn-color: #06101a;
+            --bs-btn-bg: linear-gradient(135deg, var(--primary), var(--primary-2));
+            --bs-btn-border-color: transparent;
+            --bs-btn-hover-border-color: transparent;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            border: none;
+            color: #05101a;
+            font-weight: 800;
+            border-radius: 14px;
+            box-shadow: 0 16px 34px rgba(108, 140, 255, 0.24);
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.05);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-light {
+            border-color: rgba(255,255,255,0.12);
+            color: var(--text);
+        }
+
+        .form-control, .form-select {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--text);
+            border-radius: 16px;
+            padding: 0.9rem 1rem;
+        }
+
+        .form-control::placeholder, .form-select option, .form-select {
+            color: var(--muted);
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(108, 140, 255, 0.7);
+            color: var(--text);
+            box-shadow: 0 0 0 0.2rem rgba(108, 140, 255, 0.16);
+        }
+
+        .form-label, .form-text {
+            color: var(--muted);
+        }
+
+        .badge-soft {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.55rem;
+            top: 0.35rem;
+            bottom: 0.35rem;
+            width: 1px;
+            background: rgba(255,255,255,0.12);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 1.7rem;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.03rem;
+            top: 0.25rem;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            box-shadow: 0 0 0 5px rgba(108, 140, 255, 0.12);
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.55rem 0.85rem;
+            margin: 0 0.5rem 0.5rem 0;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+        }
+
+        .chip-accent {
+            background: rgba(61, 214, 197, 0.12);
+            border-color: rgba(61, 214, 197, 0.25);
+        }
+
+        .chip-warning {
+            background: rgba(255, 179, 107, 0.12);
+            border-color: rgba(255, 179, 107, 0.25);
+        }
+
+        .footer {
+            color: var(--muted);
+            font-size: 0.94rem;
+            padding: 1.25rem 0 2rem;
+        }
+
+        @media (max-width: 768px) {
+            main { padding-top: 24px; }
+            .page-width { width: min(100% - 1rem, 1180px); }
+            .hero-panel { border-radius: 24px; }
+            .timeline { padding-left: 0.6rem; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="site-shell">
+        <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+            <div class="page-width container-fluid py-2">
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <span class="brand-mark"><i class="fas fa-sparkles"></i></span>
+                    AI Portfolio Generator
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                        {% if request.session.get('user_id') %}
+                        <li class="nav-item">
+                            <span class="navbar-text me-lg-2">
+                                <i class="fas fa-circle-user me-1"></i>{{ request.session.get('username', 'User') }}
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/analyzer">Analyzer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Logout</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main>
+            <div class="page-width">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+
+        <footer class="footer text-center">
+            <div class="page-width soft-rule mb-3"></div>
+            <div class="page-width">&copy; 2026 AI Portfolio Generator</div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

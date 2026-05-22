@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Login | AI Portfolio Generator{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center g-4">
+    <div class="col-lg-5">
+        <div class="hero-panel h-100">
+            <div class="hero-kicker">Welcome back</div>
+            <h1 class="hero-title">Get back to building a stronger portfolio.</h1>
+            <p class="hero-copy mb-4">Sign in to analyze your resume, track skill gaps, and generate a professional portfolio in a few guided steps.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <span class="badge-soft"><i class="fas fa-shield-heart"></i> Secure access</span>
+                <span class="badge-soft"><i class="fas fa-chart-line"></i> Faster analysis</span>
+                <span class="badge-soft"><i class="fas fa-wand-magic-sparkles"></i> Guided portfolio flow</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card p-4 p-md-5">
+            <div class="mb-4">
+                <div class="hero-kicker mb-2">Login</div>
+                <h2 class="section-title mb-1">Sign in to continue</h2>
+                <p class="text-secondary mb-0">Use your account details to continue where you left off.</p>
+            </div>
+            {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+            <form method="post" action="/login" class="d-grid gap-3">
+                <div>
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" placeholder="Enter username" required>
+                </div>
+                <div>
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn btn-primary py-3">Login</button>
+            </form>
+            <p class="text-center mt-4 mb-0 text-secondary">New here? <a href="/register" class="link-light fw-semibold">Create an account</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Generate Portfolio | AI Portfolio Generator{% endblock %}
+
+{% block content %}
+<div class="hero-panel mb-4">
+  <div class="row g-4 align-items-center">
+    <div class="col-lg-8">
+      <div class="hero-kicker">Create your portfolio</div>
+      <h1 class="hero-title mb-3">Build your professional portfolio</h1>
+      <p class="hero-copy mb-0">Share your story, skills, and achievements in one beautiful place. Fill in your details to create a portfolio page.</p>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8 offset-lg-2">
+    <div class="card p-5">
+      <form method="post" action="/portfolio" class="d-grid gap-4" enctype="multipart/form-data">
+        <input type="hidden" name="resume_text" value="{{ resume_text }}">
+        <input type="hidden" name="role" value="{{ role }}">
+        
+        <!-- Personal Information Section -->
+        <div class="form-section">
+          <h5 class="mb-3 text-primary fw-bold">Personal Information</h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Full name</label>
+              <input name="name" class="form-control" placeholder="Your full name" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Email</label>
+              <input name="email" type="email" class="form-control" placeholder="you@example.com" required>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+
+        <!-- Professional Links Section -->
+        <div class="form-section">
+          <h5 class="mb-3 text-primary fw-bold">Professional Links</h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-bold">LinkedIn</label>
+              <input name="linkedin" type="url" class="form-control" placeholder="https://linkedin.com/in/yourname">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">GitHub</label>
+              <input name="github" type="url" class="form-control" placeholder="https://github.com/yourname">
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+
+        <!-- Professional Summary Section -->
+        <div class="form-section">
+          <h5 class="mb-3 text-primary fw-bold">Professional Summary</h5>
+          <label class="form-label fw-bold">About you</label>
+          <textarea name="summary" class="form-control" rows="4" placeholder="A short summary of your background, skills, and goals" required></textarea>
+          <div class="form-text text-muted mt-2">Write a compelling summary that highlights your key strengths and career objectives.</div>
+        </div>
+
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+
+        <!-- Experience Section -->
+        <div class="form-section">
+          <h5 class="mb-3 text-primary fw-bold">Background</h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-bold">School (Secondary)</label>
+              <textarea name="school_education" class="form-control" rows="3" placeholder="e.g., High School, Board, Year, Grades"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">College / University</label>
+              <textarea name="college_education" class="form-control" rows="3" placeholder="e.g., BSc Computer Science, University of XYZ, 2023"></textarea>
+            </div>
+          </div>
+          <div class="row g-3 mt-3">
+            <div class="col-12">
+              <label class="form-label fw-bold">Experience</label>
+              <textarea name="experience" class="form-control" rows="3" placeholder="e.g., Senior Developer at Tech Corp (2020-2023), Led 5-person team"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+
+        <!-- Projects Section -->
+        <div class="form-section">
+          <h5 class="mb-3 text-primary fw-bold">Featured Projects</h5>
+          <div id="projects-container">
+            <div class="project-item mb-3">
+              <label class="form-label">Project 1 name</label>
+              <input name="project_name[]" class="form-control mb-2" placeholder="Project title">
+              <label class="form-label">Project 1 description</label>
+              <textarea name="project_desc[]" class="form-control" rows="3" placeholder="Describe the project, your role, tech used, and outcomes"></textarea>
+            </div>
+          </div>
+          <div class="mt-2">
+            <button id="add-project" type="button" class="btn btn-outline-light">Add another project</button>
+          </div>
+        </div>
+
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+
+        <!-- Profile Image Section -->
+        <div class="form-section">
+          <h5 class="mb-3 text-primary fw-bold">Profile Photo</h5>
+          <label class="form-label fw-bold">Upload your professional photo</label>
+          <input type="file" name="profile_image" class="form-control" accept="image/jpeg,image/png,image/gif,image/webp">
+          <div class="form-text text-muted mt-2">JPG, PNG, GIF, or WEBP. Recommended: Square image, 500x500px or larger.</div>
+        </div>
+
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+
+        <!-- Submit Button -->
+        <div class="d-flex gap-3">
+          <a href="/analyze" class="btn btn-outline-light flex-grow-1">Back</a>
+          <button class="btn btn-primary flex-grow-1 py-3 fw-bold" type="submit" style="font-size: 1.1rem;">
+            <i class="fas fa-rocket me-2"></i>Build Portfolio
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  .form-section {
+    padding: 1rem 0;
+  }
+</style>
+
+<script>
+  (function(){
+    let projectIndex = 1;
+    const addBtn = document.getElementById('add-project');
+    const container = document.getElementById('projects-container');
+    addBtn.addEventListener('click', function(){
+      projectIndex += 1;
+      const div = document.createElement('div');
+      div.className = 'project-item mb-3';
+      div.innerHTML = `
+        <label class="form-label">Project ${projectIndex} name</label>
+        <input name="project_name[]" class="form-control mb-2" placeholder="Project title">
+        <label class="form-label">Project ${projectIndex} description</label>
+        <textarea name="project_desc[]" class="form-control" rows="3" placeholder="Describe the project, your role, tech used, and outcomes"></textarea>
+      `;
+      container.appendChild(div);
+    });
+  })();
+</style>
+{% endblock %}
